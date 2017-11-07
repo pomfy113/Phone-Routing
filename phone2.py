@@ -13,52 +13,58 @@ else:
     histofile.close()
 
 # phonenum = open("phone-numbers-10.txt").read().split("\n")
-phonenum = ["+1256"]
-print("Looking for", phonenum)
+# phonenum_list = open('phone-numbers-10.txt').read().split("\n")
+phonenum_list = ['+1573533', '+44931708', '+1201895']
+# phonenum_list = ['+44931708']
 
-maxmatch = 0
+# routes = ["+1201,0.07", "+120,0.05", "+12071,0.05", '+15,0.05', '+449317089,0.05', '+449317953,0.07']
+maxmatch = 1
 closestmatch = None
 perfectmatch = False
-# Let's try a binary search?
-for number in phonenum:
-    perfectmatch = False
-    left = 0
-    right = len(routes)-1
 
-    # Let's cut it a bit.
-    for j in range(3):
-        # Index for the middle element
-        middle = (left + right) // 2
-        middle_item = routes[middle]
-        # If it's the middle, return that
-        if number > middle_item:
-            left = middle+1
-            print(left, routes[left])
-        elif number < middle_item:
-            right = middle-1
-            print(right, routes[right])
-    print(left, right)
-    # Let's change to the linear search
-    while left < right:
-        print(left, routes[left], right, routes[right])
-        print(routes[left], "blabla", number[1])
+matches = []
+phonenumberstuff = []
+# Let's try a binary search?
+for phonenum in phonenum_list:
+    closestmatch = None
+    perfectmatch = False
+    maxmatch = 2
+    if phonenum is "":
+        print("END")
+        break
+
+    for i in range(len(routes)):
         if perfectmatch is True:
             break
-        if routes[left][1] == number[1]:
+        elif routes[i] == "":
+            continue
+        elif routes[i][1] == phonenum[1]:
             currentmatch = 1
-            for j in range(len(number)-1):
-                if routes[left][j+1] == number[j+1]:
+            for j in range(len(phonenum)-1):
+                if routes[i][j+1] == phonenum[j+1]:
+                    # print("Still inside!", j, routes[i], phonenum)
                     currentmatch += 1
-                    if currentmatch == len(number):
-                        print(closestmatch, "is a perfect match")
-                        closestmatch = routes[left]
-                        perfectmatch = True
-                elif currentmatch > maxmatch:
-                    closestmatch = routes[left]
+                    if routes[i][j+2] == ",":
+                        if currentmatch > maxmatch:
+                            closestmatch = routes[i]
+                            maxmatch = currentmatch
+                            break
+                        else:
+                            break
                 else:
                     break
-        left += 1
+    if closestmatch is not None:
+        matches.append("$"+closestmatch.split(',')[1])
+        phonenumberstuff.append(closestmatch.split(',')[0])
+    else:
+        matches.append(" N/A ")
+        phonenumberstuff.append("???")
+
+print(matches)
+for i in range(len(phonenum_list)):
+    print(matches[i], phonenumberstuff[i], "-", phonenum_list[i])
+# print("Cost:", "$"+closestmatch.split(",")[1])
+# print(time() - starttime)
 
 
-print(closestmatch, phonenum)
 # print(time() - starttime)
